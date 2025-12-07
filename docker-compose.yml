@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql_final_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: test_lab_db_root_password
+      MYSQL_DATABASE: test_lab_db
+      MYSQL_USER: test_user
+      MYSQL_PASSWORD: test_user_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  web:
+    build: .
+    container_name: django_web_app
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      DB_NAME: test_lab_db
+      DB_USER: test_user
+      DB_PASSWORD: test_user_password
+      DB_HOST: db
+      DB_PORT: 3306
+
+volumes:
+  mysql_data:
